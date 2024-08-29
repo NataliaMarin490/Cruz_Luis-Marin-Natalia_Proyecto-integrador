@@ -1,6 +1,6 @@
 # Integrated Project - Dental Clinic
 
-This is an integrated project for managing a dental clinic. The system allows the management of patients, dentists, and appointments, with a backend developed in Java and a simple frontend using JavaScript.
+This is an integrated project for managing a dental clinic. The system allows the management of patients, dentists, addresses and appointments, with a backend developed in Java and a simple frontend using JavaScript.
 
 ## Project Description
 
@@ -14,6 +14,7 @@ The dental clinic management system is designed to facilitate the administration
 
 - **Patient Management**: Allows registering, updating, deleting, and viewing patient information.
 - **Dentist Management**: Allows registering, updating, deleting, and viewing dentist information.
+- **Addresses Management**: Allows registering and modifying addresses to patients.
 - **Appointment Management**: Allows assigning, modifying, and canceling appointments between patients and dentists.
 
 ## Technologies Used
@@ -42,4 +43,4 @@ The dental clinic management system is designed to facilitate the administration
 1. **Clone the Repository**:
 
    ```bash
-   [clone repo](https://github.com/NataliaMarin490/Cruz_Luis-Marin-Natalia_Proyecto-integrador.git)
+   https://github.com/NataliaMarin490/Cruz_Luis-Marin-Natalia_Proyecto-integrador.git
