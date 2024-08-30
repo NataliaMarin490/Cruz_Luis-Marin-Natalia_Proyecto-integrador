@@ -14,4 +14,9 @@ public interface IAppointmentService {
 
     List<Appointment> findAllAppointments();
 
+    void updateAppointment(Appointment appointment);
+
+    void deleteAppointment(Integer id);
+
+    Optional<Appointment> findAppointmentsByPatient(String patient);
 }
