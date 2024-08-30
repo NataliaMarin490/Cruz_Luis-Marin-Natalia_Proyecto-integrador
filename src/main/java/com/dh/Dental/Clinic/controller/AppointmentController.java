@@ -60,4 +60,7 @@ public class AppointmentController {
 
     }
 
+    // PUT - UPDATE
+    // GET - FINDBYLASTNAME
+
 }

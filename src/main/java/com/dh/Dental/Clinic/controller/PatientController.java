@@ -60,4 +60,9 @@ public class PatientController {
 
     }
 
+    // PUT-UPDATE
+    // DELETE-REMOVE
+    // GET-FINDBYNAMEANDLASTNAME
+    // GET-FINDBYLASTNAMEPARTIAL
+
 }

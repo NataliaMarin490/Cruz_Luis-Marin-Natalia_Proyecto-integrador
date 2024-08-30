@@ -17,23 +17,15 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Getter
-
 @Setter
-
 @NoArgsConstructor
-
 @AllArgsConstructor
-
 @Entity
-
 @Table(name = "patients")
-
 public class Patient {
 
     @Id
-
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Integer id;
 
     private String lastName;
@@ -45,13 +37,10 @@ public class Patient {
     private LocalDate admissionDate;
 
     @OneToOne(cascade = CascadeType.ALL)
-
     private Address address; // Relación Uno a Uno con Address
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
-
     @JsonManagedReference(value = "patient-appointment")
-
     private Set<Appointment> appointments; // Relación Uno a Muchos con Appointment
 
 }
