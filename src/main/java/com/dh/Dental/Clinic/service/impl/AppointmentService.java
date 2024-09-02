@@ -38,17 +38,19 @@ public class AppointmentService implements IAppointmentService {
     }
 
     // TODO: Complete these 3 methods with the corresponding logic
+
+    @Override
+    public List<Appointment> findAppointmentsByPatient(Integer patientId) {
+        return appointmentRepository.findByPatientId(patientId);
+    }
     @Override
     public void updateAppointment(Appointment appointment) {
+        appointmentRepository.save(appointment);
     }
 
     @Override
     public void deleteAppointment(Integer id) {
-    }
-
-    @Override
-    public Optional<Appointment> findAppointmentsByPatient(String patient) {
-        return Optional.empty();
+        appointmentRepository.deleteById(id);
     }
 
 }

@@ -27,17 +27,17 @@ public class AddressService implements IAddressService {
 
     @Override
     public Optional<Address> findAddressById(Integer id) {
-        return Optional.empty();
+        return addressRepository.findById(id);
     }
 
     @Override
     public void updateAddress(Address address) {
-
+        addressRepository.save(address);
     }
 
     @Override
     public void deleteAddress(Integer id) {
-
+        addressRepository.deleteById(id);
     }
 
 }

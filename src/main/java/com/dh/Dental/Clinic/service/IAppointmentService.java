@@ -13,10 +13,10 @@ public interface IAppointmentService {
     Optional<Appointment> findAppointmentById(Integer id);
 
     List<Appointment> findAllAppointments();
+    List<Appointment> findAppointmentsByPatient(Integer patientId);
 
     void updateAppointment(Appointment appointment);
 
     void deleteAppointment(Integer id);
 
-    Optional<Appointment> findAppointmentsByPatient(String patient);
 }
