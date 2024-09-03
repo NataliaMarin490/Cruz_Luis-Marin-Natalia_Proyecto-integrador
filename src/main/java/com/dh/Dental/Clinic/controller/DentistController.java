@@ -1,5 +1,6 @@
 package com.dh.Dental.Clinic.controller;
 
+import com.dh.Dental.Clinic.dto.response.DentistResponseDto;
 import com.dh.Dental.Clinic.entity.Dentist;
 
 import com.dh.Dental.Clinic.service.IDentistService;
@@ -31,8 +32,9 @@ public class DentistController {
     }
 
     @GetMapping("/find/{id}")
-    public ResponseEntity<Dentist> findDentistById(@PathVariable Integer id) {
-        Optional<Dentist> dentist = dentistService.findDentistById(id);
+    public ResponseEntity<DentistResponseDto> findDentistById(@PathVariable Integer id) {
+        Optional<DentistResponseDto> dentist = dentistService.findDentistById(id);
+        //return dentist.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         if (dentist.isPresent()) {
             return ResponseEntity.ok(dentist.get());
         } else {
@@ -41,33 +43,31 @@ public class DentistController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Dentist>> findAllDentists() {
+    public ResponseEntity<List<DentistResponseDto>> findAllDentists() {
         return ResponseEntity.ok(dentistService.findAllDentists());
     }
 
     @PutMapping ("/update")
     public ResponseEntity<String> updateDentist(@RequestBody Dentist dentist) {
-
-        Optional<Dentist> existingDentist = dentistService.findDentistById(dentist.getId());
-        if (existingDentist.isPresent()) {
+        try {
             dentistService.updateDentist(dentist);
             String jsonResponse = "{\"message\": \"The dentist was updated\"}";
             return ResponseEntity.ok(jsonResponse);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (RuntimeException e) {
+            String jsonResponse = "{\"message\": \"Dentist not found\"}";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"message\": \"Dentist not found\"}");
         }
     }
 
     @DeleteMapping ("/delete/{id}")
     public ResponseEntity<String> deleteDentist(@PathVariable Integer id) {
-        Optional<Dentist> existingDentist = dentistService.findDentistById(id);
-
-        if (existingDentist.isPresent()) {
+        try {
             dentistService.deleteDentist(id);
-            String jsonResponse = "{\"message\": \"The dentist was deleted\"}";
+            String jsonResponse = "{\"message\": \"The dentist was updated\"}";
             return ResponseEntity.ok(jsonResponse);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (RuntimeException e) {
+            String jsonResponse = "{\"message\": \"Dentist not found\"}";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(jsonResponse);
         }
     }
 
