@@ -1,5 +1,6 @@
 package com.dh.Dental.Clinic.controller;
 
+import com.dh.Dental.Clinic.dto.response.PatientResponseDto;
 import com.dh.Dental.Clinic.entity.Patient;
 
 import com.dh.Dental.Clinic.service.IPatientService;
@@ -29,43 +30,43 @@ public class PatientController {
     }
 
     @GetMapping ("/find/{id}")
-    public ResponseEntity<Patient> findPatientById(@PathVariable Integer id) {
-        Optional<Patient> patient = patientService.findPatientById(id);
+    public ResponseEntity<PatientResponseDto> findPatientById(@PathVariable Integer id) {
+        Optional<PatientResponseDto> patient = patientService.findPatientById(id);
+        // return patient.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         if (patient.isPresent()) {
             return ResponseEntity.ok(patient.get());
         } else {
             return ResponseEntity.notFound().build();
         }
-    }
 
+    }
     @GetMapping ("/all")
-    public ResponseEntity<List<Patient>> findAllPatients( ) {
+    public ResponseEntity<List<PatientResponseDto>> findAllPatients( ) {
         return ResponseEntity.ok(patientService.findAllPatients());
     }
 
     @PutMapping ("/update")
     public ResponseEntity<String> updatePatient(@RequestBody Patient patient) {
-
-        Optional<Patient> existingPatient = patientService.findPatientById(patient.getId());
-        if (existingPatient.isPresent()) {
+        try {
             patientService.updatePatient(patient);
             String jsonResponse = "{\"message\": \"The patient was updated\"}";
             return ResponseEntity.ok(jsonResponse);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (RuntimeException e) {
+            String jsonResponse = "{\"message\": \"Patient not found\"}";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(jsonResponse);
         }
     }
 
     @DeleteMapping ("/delete/{id}")
     public ResponseEntity<String> deletePatient(@PathVariable Integer id) {
-        Optional<Patient> existingPatient = patientService.findPatientById(id);
-
-        if (existingPatient.isPresent()) {
+        try {
             patientService.deletePatient(id);
             String jsonResponse = "{\"message\": \"The patient was deleted\"}";
             return ResponseEntity.ok(jsonResponse);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (RuntimeException e) {
+            String jsonResponse = "{\"message\": \"Patient not found\"}";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(jsonResponse);
         }
+
     }
 }
