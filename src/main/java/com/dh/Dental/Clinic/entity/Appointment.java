@@ -1,5 +1,6 @@
 package com.dh.Dental.Clinic.entity;
 
+import com.dh.Dental.Clinic.dto.response.PatientResponseDto;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
