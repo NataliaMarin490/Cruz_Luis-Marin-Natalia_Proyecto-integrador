@@ -1,5 +1,7 @@
 package com.dh.Dental.Clinic.controller;
 
+import com.dh.Dental.Clinic.dto.request.CreatePatientRequestDto;
+import com.dh.Dental.Clinic.dto.request.UpdatePatientRequestDto;
 import com.dh.Dental.Clinic.dto.response.PatientResponseDto;
 import com.dh.Dental.Clinic.entity.Patient;
 
@@ -25,8 +27,8 @@ public class PatientController {
     }
 
     @PostMapping ("/save")
-    public ResponseEntity<Patient> savePatient(@RequestBody Patient patient) {
-        return ResponseEntity.ok(patientService.savePatient(patient));
+    public ResponseEntity<PatientResponseDto> savePatient(@RequestBody CreatePatientRequestDto createPatientRequestDto) {
+        return ResponseEntity.ok(patientService.savePatient(createPatientRequestDto));
     }
 
     @GetMapping ("/find/{id}")
@@ -46,9 +48,9 @@ public class PatientController {
     }
 
     @PutMapping ("/update")
-    public ResponseEntity<String> updatePatient(@RequestBody Patient patient) {
+    public ResponseEntity<String> updatePatient(@RequestBody UpdatePatientRequestDto updatePatientRequestDto) {
         try {
-            patientService.updatePatient(patient);
+            patientService.updatePatient(updatePatientRequestDto);
             String jsonResponse = "{\"message\": \"The patient was updated\"}";
             return ResponseEntity.ok(jsonResponse);
         } catch (RuntimeException e) {

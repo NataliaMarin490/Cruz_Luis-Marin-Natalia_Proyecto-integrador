@@ -7,7 +7,6 @@ import com.dh.Dental.Clinic.dto.response.DentistResponseDto;
 import com.dh.Dental.Clinic.entity.Appointment;
 import com.dh.Dental.Clinic.entity.Dentist;
 
-import com.dh.Dental.Clinic.entity.Patient;
 import com.dh.Dental.Clinic.repository.IDentistRepository;
 
 import com.dh.Dental.Clinic.service.IDentistService;
@@ -56,11 +55,11 @@ public class DentistService implements IDentistService {
     @Override
     public List<DentistResponseDto> findAllDentists() {
         List<Dentist> dentists = dentistRepository.findAll();
-        List<DentistResponseDto> responseDtos = new ArrayList<>();
+        List<DentistResponseDto> responseDto = new ArrayList<>();
         for (Dentist dentist : dentists) {
-            responseDtos.add(convertDentistToResponse(dentist));
+            responseDto.add(convertDentistToResponse(dentist));
         }
-        return responseDtos;
+        return responseDto;
     }
 
     @Override

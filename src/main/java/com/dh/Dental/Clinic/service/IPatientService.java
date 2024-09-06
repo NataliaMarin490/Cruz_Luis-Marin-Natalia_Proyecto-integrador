@@ -1,5 +1,7 @@
 package com.dh.Dental.Clinic.service;
 
+import com.dh.Dental.Clinic.dto.request.CreatePatientRequestDto;
+import com.dh.Dental.Clinic.dto.request.UpdatePatientRequestDto;
 import com.dh.Dental.Clinic.dto.response.PatientResponseDto;
 import com.dh.Dental.Clinic.entity.Patient;
 
@@ -9,13 +11,13 @@ import java.util.Optional;
 
 public interface IPatientService {
 
-    Patient savePatient(Patient patient);
+    PatientResponseDto savePatient(CreatePatientRequestDto createPatientRequestDto);
 
     Optional<PatientResponseDto> findPatientById(Integer id);
 
     List<PatientResponseDto> findAllPatients();
 
-    void updatePatient(Patient patient);
+    void updatePatient(UpdatePatientRequestDto updatePatientRequestDto);
 
     void deletePatient(Integer id);
 }

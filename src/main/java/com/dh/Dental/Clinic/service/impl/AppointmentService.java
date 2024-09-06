@@ -18,10 +18,8 @@ import com.dh.Dental.Clinic.service.IPatientService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 
@@ -62,29 +60,28 @@ public class AppointmentService implements IAppointmentService {
     @Override
     public Optional<AppointmentResponseDto> findAppointmentById(Integer id) {
         Optional<Appointment> appointment = appointmentRepository.findById(id);
-        return appointment.map(this::convertAppointmentToResponse);
+        AppointmentResponseDto appointmentResponseDto = convertAppointmentToResponse(appointment.get());
+        return Optional.of(appointmentResponseDto);
     }
 
     @Override
     public List<AppointmentResponseDto> findAllAppointments() {
         List<Appointment> appointments = appointmentRepository.findAll();
-        List<AppointmentResponseDto> responseDtos = new ArrayList<>();
+        List<AppointmentResponseDto> responseDto = new ArrayList<>();
         for (Appointment appointment : appointments) {
-            responseDtos.add(convertAppointmentToResponse(appointment));
+            responseDto.add(convertAppointmentToResponse(appointment));
         }
-        return responseDtos;
+        return responseDto;
     }
-
-    // TODO: Complete these 3 methods with the corresponding logic
 
     @Override
     public List<AppointmentResponseDto> findAppointmentsByPatient(Integer patientId) {
         List<Appointment> appointments = appointmentRepository.findByPatientId(patientId);
-        List<AppointmentResponseDto> responseDtos = new ArrayList<>();
+        List<AppointmentResponseDto> responseDto = new ArrayList<>();
         for (Appointment appointment : appointments) {
-            responseDtos.add(convertAppointmentToResponse(appointment));
+            responseDto.add(convertAppointmentToResponse(appointment));
         }
-        return responseDtos;
+        return responseDto;
     }
     @Override
     public void updateAppointment(UpdateAppointmentRequestDto updateAppointmentRequestDto) {
@@ -114,20 +111,26 @@ public class AppointmentService implements IAppointmentService {
 
 
     private AppointmentResponseDto convertAppointmentToResponse(Appointment appointment) {
-        PatientResponseDto patientResponse = new PatientResponseDto(
+        PatientResponseDto patientResponse = null;
+        if (appointment.getPatient() != null) {
+            patientResponse = new PatientResponseDto(
                 appointment.getPatient().getId(),
                 appointment.getPatient().getLastName(),
                 appointment.getPatient().getFirstName(),
                 appointment.getPatient().getDni(),
                 appointment.getPatient().getAdmissionDate().toString()
-        );
+            );
+        }
 
-        DentistResponseDto dentistResponse = new DentistResponseDto(
+        DentistResponseDto dentistResponse = null;
+        if (appointment.getDentist() != null) {
+            dentistResponse = new DentistResponseDto(
                 appointment.getDentist().getId(),
                 appointment.getDentist().getRegistrationNumber(),
                 appointment.getDentist().getLastName(),
                 appointment.getDentist().getFirstName()
-        );
+            );
+        }
 
         return new AppointmentResponseDto(
                 appointment.getId(),
