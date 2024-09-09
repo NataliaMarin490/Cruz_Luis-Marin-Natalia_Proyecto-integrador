@@ -37,10 +37,11 @@ public class Patient {
     private LocalDate admissionDate;
 
     @OneToOne(cascade = CascadeType.ALL)
-    private Address address; // Relación Uno a Uno con Address
+    @JoinColumn(name = "address_id")
+    private Address address;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.REMOVE)
     @JsonManagedReference(value = "patient-appointment")
-    private Set<Appointment> appointments; // Relación Uno a Muchos con Appointment
+    private Set<Appointment> appointments;
 
 }

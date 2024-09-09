@@ -1,10 +1,13 @@
 package com.dh.Dental.Clinic.controller;
 
+import com.dh.Dental.Clinic.dto.request.CreateAppointmentRequestDto;
+import com.dh.Dental.Clinic.dto.request.UpdateAppointmentRequestDto;
 import com.dh.Dental.Clinic.dto.response.AppointmentResponseDto;
 import com.dh.Dental.Clinic.entity.Appointment;
 
 import com.dh.Dental.Clinic.service.IAppointmentService;
 
+import org.hibernate.sql.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -25,8 +28,8 @@ public class AppointmentController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Appointment> saveAppointment(@RequestBody Appointment appointment) {
-        return ResponseEntity.ok(appointmentService.saveAppointment(appointment));
+    public ResponseEntity<AppointmentResponseDto> saveAppointment(@RequestBody CreateAppointmentRequestDto createAppointmentRequestDto) {
+        return ResponseEntity.ok(appointmentService.saveAppointment(createAppointmentRequestDto));
     }
 
     @GetMapping("/find/{id}")
@@ -46,9 +49,9 @@ public class AppointmentController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<String> updateAppointment(@RequestBody Appointment appointment){
+    public ResponseEntity<String> updateAppointment(@RequestBody UpdateAppointmentRequestDto updateAppointmentRequestDto){
         try {
-            appointmentService.updateAppointment(appointment);
+            appointmentService.updateAppointment(updateAppointmentRequestDto);
             String jsonResponse = "{\"message\": \"The appointment was updated\"}";
             return ResponseEntity.ok(jsonResponse);
         } catch (RuntimeException e) {

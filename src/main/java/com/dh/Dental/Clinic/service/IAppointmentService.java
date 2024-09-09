@@ -1,5 +1,7 @@
 package com.dh.Dental.Clinic.service;
 
+import com.dh.Dental.Clinic.dto.request.CreateAppointmentRequestDto;
+import com.dh.Dental.Clinic.dto.request.UpdateAppointmentRequestDto;
 import com.dh.Dental.Clinic.dto.response.AppointmentResponseDto;
 import com.dh.Dental.Clinic.entity.Appointment;
 
@@ -9,14 +11,14 @@ import java.util.Optional;
 
 public interface IAppointmentService {
 
-    Appointment saveAppointment(Appointment appointment);
+    AppointmentResponseDto saveAppointment(CreateAppointmentRequestDto createAppointmentRequestDto);
 
     Optional<AppointmentResponseDto> findAppointmentById(Integer id);
 
     List<AppointmentResponseDto> findAllAppointments();
     List<AppointmentResponseDto> findAppointmentsByPatient(Integer patientId);
 
-    void updateAppointment(Appointment appointment);
+    void updateAppointment(UpdateAppointmentRequestDto updateAppointmentRequestDto);
 
     void deleteAppointment(Integer id);
 

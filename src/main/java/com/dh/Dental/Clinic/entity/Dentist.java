@@ -33,6 +33,6 @@ public class Dentist {
 
     @OneToMany(mappedBy = "dentist", cascade = CascadeType.REMOVE)
     @JsonManagedReference(value = "dentist-appointment")
-    private Set<Appointment> appointments; // Relación Uno a Muchos con Appointment
+    private Set<Appointment> appointments;
 
 }

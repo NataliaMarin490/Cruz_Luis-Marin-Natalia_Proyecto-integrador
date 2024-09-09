@@ -1,10 +1,14 @@
 package com.dh.Dental.Clinic.service.impl;
 
+import com.dh.Dental.Clinic.dto.request.CreateAppointmentRequestDto;
+import com.dh.Dental.Clinic.dto.request.UpdateAppointmentRequestDto;
 import com.dh.Dental.Clinic.dto.response.AppointmentResponseDto;
 import com.dh.Dental.Clinic.dto.response.DentistResponseDto;
 import com.dh.Dental.Clinic.dto.response.PatientResponseDto;
 import com.dh.Dental.Clinic.entity.Appointment;
 
+import com.dh.Dental.Clinic.entity.Dentist;
+import com.dh.Dental.Clinic.entity.Patient;
 import com.dh.Dental.Clinic.repository.IAppointmentRepository;
 
 import com.dh.Dental.Clinic.service.IAppointmentService;
@@ -13,10 +17,9 @@ import com.dh.Dental.Clinic.service.IDentistService;
 import com.dh.Dental.Clinic.service.IPatientService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 
@@ -33,43 +36,67 @@ public class AppointmentService implements IAppointmentService {
     }
 
     @Override
-    public Appointment saveAppointment(Appointment appointment) {
-        return appointmentRepository.save(appointment);
+    public AppointmentResponseDto saveAppointment(CreateAppointmentRequestDto createAppointmentRequestDto) {
+        Optional<PatientResponseDto> patientResponseDto = patientService.findPatientById(createAppointmentRequestDto.getPatient_id());
+        Optional<DentistResponseDto> dentistResponseDto = dentistService.findDentistById(createAppointmentRequestDto.getDentist_id());
+
+        Patient patient = convertPatientDtoToEntity(patientResponseDto.get());
+        Dentist dentist = convertDentistDtoToEntity(dentistResponseDto.get());
+
+        Appointment appointment = new Appointment();
+        Appointment appointmentBd = null;
+        AppointmentResponseDto appointmentResponseDto = null;
+
+        appointment.setPatient(patient);
+        appointment.setDentist(dentist);
+        appointment.setDate(LocalDate.parse(createAppointmentRequestDto.getDate()));
+
+        appointmentBd = appointmentRepository.save(appointment);
+
+        appointmentResponseDto = convertAppointmentToResponse(appointmentBd);
+        return appointmentResponseDto;
     }
 
     @Override
     public Optional<AppointmentResponseDto> findAppointmentById(Integer id) {
         Optional<Appointment> appointment = appointmentRepository.findById(id);
-        return appointment.map(this::convertAppointmentToResponse);
+        AppointmentResponseDto appointmentResponseDto = convertAppointmentToResponse(appointment.get());
+        return Optional.of(appointmentResponseDto);
     }
 
     @Override
     public List<AppointmentResponseDto> findAllAppointments() {
         List<Appointment> appointments = appointmentRepository.findAll();
-        List<AppointmentResponseDto> responseDtos = new ArrayList<>();
+        List<AppointmentResponseDto> responseDto = new ArrayList<>();
         for (Appointment appointment : appointments) {
-            responseDtos.add(convertAppointmentToResponse(appointment));
+            responseDto.add(convertAppointmentToResponse(appointment));
         }
-        return responseDtos;
+        return responseDto;
     }
-
-    // TODO: Complete these 3 methods with the corresponding logic
 
     @Override
     public List<AppointmentResponseDto> findAppointmentsByPatient(Integer patientId) {
         List<Appointment> appointments = appointmentRepository.findByPatientId(patientId);
-        List<AppointmentResponseDto> responseDtos = new ArrayList<>();
+        List<AppointmentResponseDto> responseDto = new ArrayList<>();
         for (Appointment appointment : appointments) {
-            responseDtos.add(convertAppointmentToResponse(appointment));
+            responseDto.add(convertAppointmentToResponse(appointment));
         }
-        return responseDtos;
+        return responseDto;
     }
     @Override
-    public void updateAppointment(Appointment appointment) {
-        if (appointmentRepository.existsById(appointment.getId())) {
+    public void updateAppointment(UpdateAppointmentRequestDto updateAppointmentRequestDto) {
+        Optional<PatientResponseDto> patientResponseDto = patientService.findPatientById(updateAppointmentRequestDto.getPatient_id());
+        Optional<DentistResponseDto> dentistResponseDto = dentistService.findDentistById(updateAppointmentRequestDto.getDentist_id());
+
+        Patient patient = convertPatientDtoToEntity(patientResponseDto.get());
+        Dentist dentist = convertDentistDtoToEntity(dentistResponseDto.get());
+
+        if(patientResponseDto.isPresent() && dentistResponseDto.isPresent()){
+            Appointment appointment = new Appointment(
+                updateAppointmentRequestDto.getId(),
+                patient, dentist, LocalDate.parse(updateAppointmentRequestDto.getDate())
+            );
             appointmentRepository.save(appointment);
-        } else {
-            throw new RuntimeException("Appointment not found");
         }
     }
 
@@ -84,20 +111,26 @@ public class AppointmentService implements IAppointmentService {
 
 
     private AppointmentResponseDto convertAppointmentToResponse(Appointment appointment) {
-        PatientResponseDto patientResponse = new PatientResponseDto(
+        PatientResponseDto patientResponse = null;
+        if (appointment.getPatient() != null) {
+            patientResponse = new PatientResponseDto(
                 appointment.getPatient().getId(),
                 appointment.getPatient().getLastName(),
                 appointment.getPatient().getFirstName(),
                 appointment.getPatient().getDni(),
                 appointment.getPatient().getAdmissionDate().toString()
-        );
+            );
+        }
 
-        DentistResponseDto dentistResponse = new DentistResponseDto(
+        DentistResponseDto dentistResponse = null;
+        if (appointment.getDentist() != null) {
+            dentistResponse = new DentistResponseDto(
                 appointment.getDentist().getId(),
                 appointment.getDentist().getRegistrationNumber(),
                 appointment.getDentist().getLastName(),
                 appointment.getDentist().getFirstName()
-        );
+            );
+        }
 
         return new AppointmentResponseDto(
                 appointment.getId(),
@@ -105,6 +138,25 @@ public class AppointmentService implements IAppointmentService {
                 dentistResponse,
                 appointment.getDate().toString()
         );
+    }
+
+    private Patient convertPatientDtoToEntity(PatientResponseDto patientDto) {
+        Patient patient = new Patient();
+        patient.setId(patientDto.getId());
+        patient.setLastName(patientDto.getLastName());
+        patient.setFirstName(patientDto.getFirstName());
+        patient.setDni(patientDto.getDni());
+        patient.setAdmissionDate(LocalDate.parse(patientDto.getAdmissionDate()));
+        return patient;
+    }
+
+    private Dentist convertDentistDtoToEntity(DentistResponseDto dentistDto) {
+        Dentist dentist = new Dentist();
+        dentist.setId(dentistDto.getId());
+        dentist.setRegistrationNumber(dentistDto.getRegistrationNumber());
+        dentist.setLastName(dentistDto.getLastName());
+        dentist.setFirstName(dentistDto.getFirstName());
+        return dentist;
     }
 
 }
