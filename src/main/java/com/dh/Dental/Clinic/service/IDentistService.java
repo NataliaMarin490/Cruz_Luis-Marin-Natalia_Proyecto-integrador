@@ -21,4 +21,6 @@ public interface IDentistService {
     void updateDentist(UpdateDentistRequestDto updateDentistRequestDto);
 
     void deleteDentist(Integer id);
+
+    Optional<DentistResponseDto> findDentistByRegistrationNumber(String registrationNumber);
 }

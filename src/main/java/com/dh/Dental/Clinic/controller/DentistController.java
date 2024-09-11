@@ -65,7 +65,7 @@ public class DentistController {
     public ResponseEntity<String> deleteDentist(@PathVariable Integer id) {
         try {
             dentistService.deleteDentist(id);
-            String jsonResponse = "{\"message\": \"The dentist was updated\"}";
+            String jsonResponse = "{\"message\": \"The dentist was deleted\"}";
             return ResponseEntity.ok(jsonResponse);
         } catch (RuntimeException e) {
             String jsonResponse = "{\"message\": \"Dentist not found\"}";

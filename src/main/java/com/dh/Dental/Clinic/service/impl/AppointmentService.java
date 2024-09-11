@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 
@@ -107,6 +106,24 @@ public class AppointmentService implements IAppointmentService {
         } else {
             throw new RuntimeException("Appointment not found");
         }
+    }
+
+    @Override
+
+    public List<AppointmentResponseDto> findAppointmentsByDate(LocalDate date) {
+
+        List<Appointment> appointments = appointmentRepository.findByDate(date);
+
+        List<AppointmentResponseDto> responseDto = new ArrayList<>();
+
+        for (Appointment appointment : appointments) {
+
+            responseDto.add(convertAppointmentToResponse(appointment));
+
+        }
+
+        return responseDto;
+
     }
 
 
