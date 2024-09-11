@@ -16,11 +16,8 @@ import com.dh.Dental.Clinic.service.IPatientService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,8 +40,13 @@ public class PatientService implements IPatientService {
         patient.setDni(createPatientRequestDto.getDni());
         patient.setAddress(createPatientRequestDto.getAddress());
         patient.setAdmissionDate(createPatientRequestDto.getAdmissionDate());
-        Set<Appointment> appointments = convertAppointmentDtoSetToEntitySet(createPatientRequestDto.getAppointment());
-        patient.setAppointments(appointments);
+        if (createPatientRequestDto.getAppointment() != null) {
+
+            Set<Appointment> appointments = convertAppointmentDtoSetToEntitySet(createPatientRequestDto.getAppointment());
+
+            patient.setAppointments(appointments);
+
+        }
 
         Patient patientDb = patientRepository.save(patient);
         patientResponseDto = convertPatientToResponse(patientDb);
@@ -84,14 +86,30 @@ public class PatientService implements IPatientService {
     @Override
     public void updatePatient(UpdatePatientRequestDto updatePatientRequestDto) {
         if (patientRepository.existsById(updatePatientRequestDto.getId())) {
-            Set<Appointment> appointments =
-                convertAppointmentDtoSetToEntitySet(updatePatientRequestDto.getAppointment());
 
-            Patient patient = new Patient(
-                updatePatientRequestDto.getId(),
-                updatePatientRequestDto.getLastName(), updatePatientRequestDto.getFirstName(),
-                updatePatientRequestDto.getDni(), updatePatientRequestDto.getAdmissionDate(),
-                updatePatientRequestDto.getAddress(), appointments);
+            Patient patient = new Patient();
+
+            patient.setId(updatePatientRequestDto.getId());
+
+            patient.setLastName(updatePatientRequestDto.getLastName());
+
+            patient.setFirstName(updatePatientRequestDto.getFirstName());
+
+            patient.setDni(updatePatientRequestDto.getDni());
+
+            patient.setAdmissionDate(updatePatientRequestDto.getAdmissionDate());
+
+            patient.setAddress(updatePatientRequestDto.getAddress());
+
+
+            if (updatePatientRequestDto.getAppointment() != null) {
+
+                Set<Appointment> appointments = convertAppointmentDtoSetToEntitySet(updatePatientRequestDto.getAppointment());
+
+                patient.setAppointments(appointments);
+
+            }
+
             patientRepository.save(patient);
 
         } else {

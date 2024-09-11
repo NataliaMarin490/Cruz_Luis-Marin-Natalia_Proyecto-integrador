@@ -14,11 +14,8 @@ import com.dh.Dental.Clinic.service.IDentistService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,8 +35,13 @@ public class DentistService implements IDentistService {
         dentist.setRegistrationNumber(createDentistRequestDto.getRegistrationNumber());
         dentist.setFirstName(createDentistRequestDto.getFirstName());
         dentist.setLastName(createDentistRequestDto.getLastName());
-        Set<Appointment> appointments = convertAppointmentDtoSetToEntitySet(createDentistRequestDto.getAppointment());
-        dentist.setAppointments(appointments);
+        if (createDentistRequestDto.getAppointment() != null) {
+
+            Set<Appointment> appointments = convertAppointmentDtoSetToEntitySet(createDentistRequestDto.getAppointment());
+
+            dentist.setAppointments(appointments);
+
+        }
 
         Dentist dentistBd = dentistRepository.save(dentist);
         dentistResponseDto = convertDentistToResponse(dentistBd);
@@ -65,16 +67,29 @@ public class DentistService implements IDentistService {
     @Override
     public void updateDentist(UpdateDentistRequestDto updateDentistRequestDto) {
         if (dentistRepository.existsById(updateDentistRequestDto.getId())) {
-            Set<Appointment> appointments =
-                convertAppointmentDtoSetToEntitySet(updateDentistRequestDto.getAppointment());
+            Dentist dentist = new Dentist();
 
-            Dentist dentist = new Dentist(
-                updateDentistRequestDto.getId(),
-                updateDentistRequestDto.getRegistrationNumber(), updateDentistRequestDto.getLastName(),
-                updateDentistRequestDto.getFirstName(), appointments);
+            dentist.setId(updateDentistRequestDto.getId());
+
+            dentist.setRegistrationNumber(updateDentistRequestDto.getRegistrationNumber());
+
+            dentist.setLastName(updateDentistRequestDto.getLastName());
+
+            dentist.setFirstName(updateDentistRequestDto.getFirstName());
+
+            if (updateDentistRequestDto.getAppointment() != null) {
+
+                Set<Appointment> appointments = convertAppointmentDtoSetToEntitySet(updateDentistRequestDto.getAppointment());
+                dentist.setAppointments(appointments);
+
+            }
+
             dentistRepository.save(dentist);
+
         } else {
+
             throw new RuntimeException("Dentist not found");
+
         }
     }
 
@@ -86,6 +101,17 @@ public class DentistService implements IDentistService {
             throw new RuntimeException("Dentist not found");
         }
     }
+
+    @Override
+
+    public Optional<DentistResponseDto> findDentistByRegistrationNumber(String registrationNumber) {
+
+        Optional<Dentist> dentist = dentistRepository.findByRegistrationNumber(registrationNumber);
+
+        return dentist.map(this::convertDentistToResponse);
+
+    }
+
 
     private DentistResponseDto convertDentistToResponse(Dentist dentist) {
         return new DentistResponseDto(

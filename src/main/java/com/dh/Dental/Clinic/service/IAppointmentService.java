@@ -5,6 +5,7 @@ import com.dh.Dental.Clinic.dto.request.UpdateAppointmentRequestDto;
 import com.dh.Dental.Clinic.dto.response.AppointmentResponseDto;
 import com.dh.Dental.Clinic.entity.Appointment;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import java.util.Optional;
@@ -22,4 +23,5 @@ public interface IAppointmentService {
 
     void deleteAppointment(Integer id);
 
+    List<AppointmentResponseDto> findAppointmentsByDate(LocalDate date);
 }
