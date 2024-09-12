@@ -7,6 +7,8 @@ import com.dh.Dental.Clinic.dto.response.DentistResponseDto;
 import com.dh.Dental.Clinic.entity.Appointment;
 import com.dh.Dental.Clinic.entity.Dentist;
 
+import com.dh.Dental.Clinic.exception.ResourceNotFoundException;
+
 import com.dh.Dental.Clinic.repository.IDentistRepository;
 
 import com.dh.Dental.Clinic.service.IDentistService;
@@ -88,7 +90,7 @@ public class DentistService implements IDentistService {
 
         } else {
 
-            throw new RuntimeException("Dentist not found");
+            throw new ResourceNotFoundException("Dentist not found");
 
         }
     }
@@ -98,7 +100,7 @@ public class DentistService implements IDentistService {
         if (dentistRepository.existsById(id)) {
             dentistRepository.deleteById(id);
         } else {
-            throw new RuntimeException("Dentist not found");
+            throw new ResourceNotFoundException("Dentist not found");
         }
     }
 

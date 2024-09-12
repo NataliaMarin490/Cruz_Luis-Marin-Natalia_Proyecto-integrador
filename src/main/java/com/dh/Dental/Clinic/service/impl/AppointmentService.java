@@ -9,6 +9,11 @@ import com.dh.Dental.Clinic.entity.Appointment;
 
 import com.dh.Dental.Clinic.entity.Dentist;
 import com.dh.Dental.Clinic.entity.Patient;
+import com.dh.Dental.Clinic.exception.BadRequestException;
+
+import com.dh.Dental.Clinic.exception.ResourceNotFoundException;
+
+
 import com.dh.Dental.Clinic.repository.IAppointmentRepository;
 
 import com.dh.Dental.Clinic.service.IAppointmentService;
@@ -39,6 +44,12 @@ public class AppointmentService implements IAppointmentService {
         Optional<PatientResponseDto> patientResponseDto = patientService.findPatientById(createAppointmentRequestDto.getPatient_id());
         Optional<DentistResponseDto> dentistResponseDto = dentistService.findDentistById(createAppointmentRequestDto.getDentist_id());
 
+        if (patientResponseDto.isEmpty() || dentistResponseDto.isEmpty()) {
+
+            throw new BadRequestException("Patient or Dentist not found");
+
+        }
+
         Patient patient = convertPatientDtoToEntity(patientResponseDto.get());
         Dentist dentist = convertDentistDtoToEntity(dentistResponseDto.get());
 
@@ -58,8 +69,9 @@ public class AppointmentService implements IAppointmentService {
 
     @Override
     public Optional<AppointmentResponseDto> findAppointmentById(Integer id) {
-        Optional<Appointment> appointment = appointmentRepository.findById(id);
-        AppointmentResponseDto appointmentResponseDto = convertAppointmentToResponse(appointment.get());
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
+        AppointmentResponseDto appointmentResponseDto = convertAppointmentToResponse(appointment);
         return Optional.of(appointmentResponseDto);
     }
 
@@ -84,28 +96,36 @@ public class AppointmentService implements IAppointmentService {
     }
     @Override
     public void updateAppointment(UpdateAppointmentRequestDto updateAppointmentRequestDto) {
+        Appointment appointment = appointmentRepository.findById(updateAppointmentRequestDto.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
+
         Optional<PatientResponseDto> patientResponseDto = patientService.findPatientById(updateAppointmentRequestDto.getPatient_id());
         Optional<DentistResponseDto> dentistResponseDto = dentistService.findDentistById(updateAppointmentRequestDto.getDentist_id());
+
+        if (!patientResponseDto.isPresent() || !dentistResponseDto.isPresent()) {
+
+            throw new BadRequestException("Patient or Dentist not found");
+
+        }
 
         Patient patient = convertPatientDtoToEntity(patientResponseDto.get());
         Dentist dentist = convertDentistDtoToEntity(dentistResponseDto.get());
 
-        if(patientResponseDto.isPresent() && dentistResponseDto.isPresent()){
-            Appointment appointment = new Appointment(
-                updateAppointmentRequestDto.getId(),
-                patient, dentist, LocalDate.parse(updateAppointmentRequestDto.getDate())
-            );
-            appointmentRepository.save(appointment);
-        }
+        appointment.setPatient(patient);
+
+        appointment.setDentist(dentist);
+
+        appointment.setDate(LocalDate.parse(updateAppointmentRequestDto.getDate()));
+
+        appointmentRepository.save(appointment);
     }
 
     @Override
     public void deleteAppointment(Integer id) {
-        if (appointmentRepository.existsById(id)) {
-            appointmentRepository.deleteById(id);
-        } else {
-            throw new RuntimeException("Appointment not found");
+        if (!appointmentRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Appointment not found");
         }
+        appointmentRepository.deleteById(id);
     }
 
     @Override
