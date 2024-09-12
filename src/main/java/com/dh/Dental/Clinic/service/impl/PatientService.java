@@ -9,6 +9,10 @@ import com.dh.Dental.Clinic.entity.Appointment;
 import com.dh.Dental.Clinic.entity.Dentist;
 import com.dh.Dental.Clinic.entity.Patient;
 
+import com.dh.Dental.Clinic.exception.BadRequestException;
+
+import com.dh.Dental.Clinic.exception.ResourceNotFoundException;
+
 import com.dh.Dental.Clinic.repository.IPatientRepository;
 
 import com.dh.Dental.Clinic.service.IPatientService;
@@ -114,7 +118,7 @@ public class PatientService implements IPatientService {
 
         } else {
 
-            throw new RuntimeException("Patient not found");
+            throw new ResourceNotFoundException("Patient not found");
 
         }
     }
@@ -127,7 +131,7 @@ public class PatientService implements IPatientService {
 
         } else {
 
-            throw new RuntimeException("Patient not found");
+            throw new ResourceNotFoundException("Patient not found");
 
         }
     }
